@@ -1,6 +1,6 @@
 # ZeroCoreManage
 
-#ZeroTermuxEngine
+# ZeroTermuxEngine
 
 ZeroTermux 集成的核心功能，一般与主APK集成在一起需要分开安装，
 
