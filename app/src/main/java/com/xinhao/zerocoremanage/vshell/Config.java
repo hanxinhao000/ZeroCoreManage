@@ -33,14 +33,14 @@ public class Config {
      * Name of CD-ROM image file.
      * Must be a name of file located in assets directory.
      */
-    public static final String CDROM_IMAGE_NAME = "alpine/operating-system.iso";
+    public static final String CDROM_IMAGE_NAME = "operating-system.iso";
    // public static final String CDROM_IMAGE_NAME = "alpine.qcow2";
 
     /**
      * Name of HDD image file.
      * Must be a name of file located in assets directory.
      */
-    public static final String HDD_IMAGE_NAME = "alpine/userdata.qcow2";
+    public static final String HDD_IMAGE_NAME = "userdata.qcow2";
 
     /**
      * Name of zip archive with QEMU firmware.

@@ -42,9 +42,9 @@ public class Installer {
     public static void setupIfNeeded(final Context mContext, Context mEngineContext, Handler mHandler) {
         // List of files to extract.
         final String[] runtimeDataFiles = {
-                "alpine/bios-256k.bin",
-                "alpine/efi-virtio.rom",
-                "alpine/kvmvapic.bin",
+                "bios-256k.bin",
+                "efi-virtio.rom",
+                "kvmvapic.bin",
             Config.CDROM_IMAGE_NAME,
             Config.HDD_IMAGE_NAME,
         };
