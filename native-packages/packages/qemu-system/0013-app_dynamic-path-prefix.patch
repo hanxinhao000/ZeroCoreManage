@@ -1,0 +1,146 @@
+diff -uNr qemu-5.2.0/block.c qemu-5.2.0.mod/block.c
+--- qemu-5.2.0/block.c	2020-12-09 15:39:29.972256067 +0200
++++ qemu-5.2.0.mod/block.c	2020-12-09 15:46:53.515574364 +0200
+@@ -760,14 +760,16 @@
+             ? 0 : -GetLastError());
+ #else
+     int fd;
+-    const char *tmpdir;
+-    tmpdir = getenv("TMPDIR");
++    char *tmpdir = getenv("TMPDIR");
++    char *prefixed_tmpdir = android_dynamic_path_prefix("/tmp");
+     if (!tmpdir) {
+-        tmpdir = "@TERMUX_PREFIX@/tmp";
++        tmpdir = prefixed_tmpdir;
+     }
+     if (snprintf(filename, size, "%s/vl.XXXXXX", tmpdir) >= size) {
++        free(prefixed_tmpdir);
+         return -EOVERFLOW;
+     }
++    free(prefixed_tmpdir);
+     fd = mkstemp(filename);
+     if (fd < 0) {
+         return -errno;
+diff -uNr qemu-5.2.0/hw/usb/ccid-card-emulated.c qemu-5.2.0.mod/hw/usb/ccid-card-emulated.c
+--- qemu-5.2.0/hw/usb/ccid-card-emulated.c	2020-12-09 15:39:29.976256097 +0200
++++ qemu-5.2.0.mod/hw/usb/ccid-card-emulated.c	2020-12-09 15:49:46.313093350 +0200
+@@ -417,7 +417,7 @@
+     event_notifier_cleanup(&card->notifier);
+ }
+ 
+-#define CERTIFICATES_DEFAULT_DB "@TERMUX_PREFIX@/etc/pki/nssdb"
++#define CERTIFICATES_DEFAULT_DB "./pki/nssdb"
+ #define CERTIFICATES_ARGS_TEMPLATE\
+     "db=\"%s\" use_hw=no soft=(,Virtual Reader,CAC,,%s,%s,%s)"
+ 
+diff -uNr qemu-5.2.0/linux-user/syscall.c qemu-5.2.0.mod/linux-user/syscall.c
+--- qemu-5.2.0/linux-user/syscall.c	2020-12-09 15:40:00.472483771 +0200
++++ qemu-5.2.0.mod/linux-user/syscall.c	2020-12-09 15:46:53.519574394 +0200
+@@ -8121,9 +8121,11 @@
+ 
+         /* create temporary file to map stat to */
+         tmpdir = getenv("TMPDIR");
++        char *prefixed_tmpdir = android_dynamic_path_prefix("/tmp");
+         if (!tmpdir)
+-            tmpdir = "@TERMUX_PREFIX@/tmp";
++            tmpdir = prefixed_tmpdir;
+         snprintf(filename, sizeof(filename), "%s/qemu-open.XXXXXX", tmpdir);
++        free(prefixed_tmpdir);
+         fd = mkstemp(filename);
+         if (fd < 0) {
+             return fd;
+diff -uNr qemu-5.2.0/migration/exec.c qemu-5.2.0.mod/migration/exec.c
+--- qemu-5.2.0/migration/exec.c	2020-12-09 15:39:29.980256127 +0200
++++ qemu-5.2.0.mod/migration/exec.c	2020-12-09 15:46:53.519574394 +0200
+@@ -28,7 +28,7 @@
+ void exec_start_outgoing_migration(MigrationState *s, const char *command, Error **errp)
+ {
+     QIOChannel *ioc;
+-    const char *argv[] = { "@TERMUX_PREFIX@/bin/sh", "-c", command, NULL };
++    const char *argv[] = { "/system/bin/sh", "-c", command, NULL };
+ 
+     trace_migration_exec_outgoing(command);
+     ioc = QIO_CHANNEL(qio_channel_command_new_spawn(argv,
+@@ -55,7 +55,7 @@
+ void exec_start_incoming_migration(const char *command, Error **errp)
+ {
+     QIOChannel *ioc;
+-    const char *argv[] = { "@TERMUX_PREFIX@/bin/sh", "-c", command, NULL };
++    const char *argv[] = { "/system/bin/sh", "-c", command, NULL };
+ 
+     trace_migration_exec_incoming(command);
+     ioc = QIO_CHANNEL(qio_channel_command_new_spawn(argv,
+diff -uNr qemu-5.2.0/net/tap.c qemu-5.2.0.mod/net/tap.c
+--- qemu-5.2.0/net/tap.c	2020-12-09 15:39:29.980256127 +0200
++++ qemu-5.2.0.mod/net/tap.c	2020-12-09 15:46:53.519574394 +0200
+@@ -533,7 +533,7 @@
+             *parg++ = helper_cmd;
+             *parg++ = NULL;
+ 
+-            execv("@TERMUX_PREFIX@/bin/sh", args);
++            execv("/system/bin/sh", args);
+             g_free(helper_cmd);
+         } else {
+             /* assume helper is just the executable path name */
+diff -uNr qemu-5.2.0/slirp/src/slirp.c qemu-5.2.0.mod/slirp/src/slirp.c
+--- qemu-5.2.0/slirp/src/slirp.c	2020-12-09 15:39:29.980256127 +0200
++++ qemu-5.2.0.mod/slirp/src/slirp.c	2020-12-09 15:46:53.519574394 +0200
+@@ -133,9 +133,12 @@
+         return 0;
+     }
+     old_stat = *cached_stat;
+-    if (stat("@TERMUX_PREFIX@/etc/resolv.conf", cached_stat) != 0) {
++    char *prefixed_resolvconf_path = android_dynamic_path_prefix("/etc/resolv.conf");
++    if (stat(prefixed_resolvconf_path, cached_stat) != 0) {
++        free(prefixed_resolvconf_path);
+         return -1;
+     }
++    free(prefixed_resolvconf_path);
+     if (cached_stat->st_dev == old_stat.st_dev &&
+         cached_stat->st_ino == old_stat.st_ino &&
+         cached_stat->st_size == old_stat.st_size &&
+@@ -157,9 +160,13 @@
+     void *tmp_addr = alloca(addrlen);
+     unsigned if_index;
+ 
+-    f = fopen("@TERMUX_PREFIX@/etc/resolv.conf", "r");
+-    if (!f)
++    char *prefixed_resolvconf_path = android_dynamic_path_prefix("/etc/resolv.conf");
++    f = fopen(prefixed_resolvconf_path, "r");
++    if (!f) {
++        free(prefixed_resolvconf_path);
+         return -1;
++    }
++    free(prefixed_resolvconf_path);
+ 
+     DEBUG_MISC("IP address of your DNS(s):");
+     while (fgets(buff, 512, f) != NULL) {
+diff -uNr qemu-5.2.0/tcg/tcg.c qemu-5.2.0.mod/tcg/tcg.c
+--- qemu-5.2.0/tcg/tcg.c	2020-12-09 15:39:29.980256127 +0200
++++ qemu-5.2.0.mod/tcg/tcg.c	2020-12-09 15:46:53.519574394 +0200
+@@ -4628,7 +4628,9 @@
+     /* Enable this block to be able to debug the ELF image file creation.
+        One can use readelf, objdump, or other inspection utilities.  */
+     {
+-        FILE *f = fopen("@TERMUX_PREFIX@/tmp/qemu.jit", "w+b");
++        char *qemujit_tmp_file = android_dynamic_path_prefix("/tmp/qemu.jit");
++        FILE *f = fopen(qemujit_tmp_file, "w+b");
++        free(qemujit_tmp_file);
+ 
+         if (f) {
+             if (fwrite(img, img_size, 1, f) != img_size) {
+diff -uNr qemu-5.2.0/util/qemu-sockets.c qemu-5.2.0.mod/util/qemu-sockets.c
+--- qemu-5.2.0/util/qemu-sockets.c	2020-12-09 15:39:29.980256127 +0200
++++ qemu-5.2.0.mod/util/qemu-sockets.c	2020-12-09 15:46:53.523574424 +0200
+@@ -900,8 +900,10 @@
+         path = saddr->path;
+     } else {
+         const char *tmpdir = getenv("TMPDIR");
+-        tmpdir = tmpdir ? tmpdir : "@TERMUX_PREFIX@/tmp";
++        char *prefixed_tmpdir = android_dynamic_path_prefix("/tmp");
++        tmpdir = tmpdir ? tmpdir : prefixed_tmpdir;
+         path = pathbuf = g_strdup_printf("%s/qemu-socket-XXXXXX", tmpdir);
++        free(prefixed_tmpdir);
+     }
+ 
+     pathlen = strlen(path);

@@ -1,0 +1,11 @@
+diff -uNr ./usr.old/include/asm-generic/termbits.h ./usr/include/asm-generic/termbits.h
+--- ./usr.old/include/asm-generic/termbits.h	2019-10-17 15:35:02.000000000 +0300
++++ ./usr/include/asm-generic/termbits.h	2019-12-13 19:00:25.447498748 +0200
+@@ -190,5 +190,6 @@
+ #define TCIOFLUSH 2
+ #define TCSANOW 0
+ #define TCSADRAIN 1
+-#define TCSAFLUSH 2
++/* TCSAFLUSH is patched to be TCSANOW to work around Android SELinux rule */
++#define TCSAFLUSH 0
+ #endif

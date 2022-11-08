@@ -1,0 +1,21 @@
+diff -uNr ./usr.old/include/stdlib.h ./usr/include/stdlib.h
+--- ./usr.old/include/stdlib.h	2019-10-17 15:35:02.000000000 +0300
++++ ./usr/include/stdlib.h	2019-12-13 19:25:03.748348682 +0200
+@@ -33,6 +33,7 @@
+ #include <bits/wait.h>
+ #include <malloc.h>
+ #include <stddef.h>
++#include <stdint.h>
+ #include <sys/cdefs.h>
+ #include <xlocale.h>
+ 
+@@ -224,8 +225,7 @@
+ size_t wcstombs(char* __dst, const wchar_t* __src, size_t __n);
+ 
+ #if __ANDROID_API__ >= __ANDROID_API_L__
+-size_t __ctype_get_mb_cur_max(void) __INTRODUCED_IN(21);
+-#define MB_CUR_MAX __ctype_get_mb_cur_max()
++#define MB_CUR_MAX 4
+ #else
+ /*
+  * Pre-L we didn't have any locale support and so we were always the POSIX

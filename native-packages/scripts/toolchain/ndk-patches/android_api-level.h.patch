@@ -1,0 +1,18 @@
+diff -uNr ./usr.old/include/android/api-level.h ./usr/include/android/api-level.h
+--- ./usr.old/include/android/api-level.h	2019-05-22 12:49:28.000000000 +0300
++++ ./usr/include/android/api-level.h	2019-12-15 13:18:06.754440355 +0200
+@@ -47,12 +47,8 @@
+ #endif
+ 
+ #ifndef __ANDROID_API__
+-/**
+- * `__ANDROID_API__` is the API level being targeted. For the OS,
+- * this is `__ANDROID_API_FUTURE__`. For the NDK, this is set by the
+- * compiler/build system based on the API level you claimed to target.
+- */
+-#define __ANDROID_API__ __ANDROID_API_FUTURE__
++/** Default Android API level to target. */
++#define __ANDROID_API__ 24
+ #endif
+ 
+ /** Names the Gingerbread API level (9), for comparisons against __ANDROID_API__. */

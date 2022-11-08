@@ -1,0 +1,91 @@
+diff -uNr qemu-5.2.0/configure qemu-5.2.0.mod/configure
+--- qemu-5.2.0/configure	2020-12-08 18:59:44.000000000 +0200
++++ qemu-5.2.0.mod/configure	2020-12-09 16:24:26.073781672 +0200
+@@ -2439,8 +2439,8 @@
+ #include <snappy-c.h>
+ int main(void) { snappy_max_compressed_length(4096); return 0; }
+ EOF
+-    if compile_prog "" "-lsnappy" ; then
+-        snappy_libs='-lsnappy'
++    if compile_prog "" "-lsnappy -lc++_static -lc++abi" ; then
++        snappy_libs='-lsnappy -lc++_static -lc++abi'
+         snappy="yes"
+     else
+         if test "$snappy" = "yes"; then
+@@ -2931,6 +2931,8 @@
+ fi
+ 
+ has_libgcrypt() {
++	return 0
++
+     if ! has "libgcrypt-config"
+     then
+ 	return 1
+@@ -3000,10 +3002,7 @@
+         # Debian has removed -lgpg-error from libgcrypt-config
+         # as it "spreads unnecessary dependencies" which in
+         # turn breaks static builds...
+-        if test "$static" = "yes"
+-        then
+-            gcrypt_libs="$gcrypt_libs -lgpg-error"
+-        fi
++        gcrypt_libs="$gcrypt_libs -lgpg-error"
+ 
+         # Link test to make sure the given libraries work (e.g for static).
+         write_c_skeleton
+@@ -3453,7 +3452,7 @@
+ int main(void) { curl_easy_init(); curl_multi_setopt(0, 0, 0); return 0; }
+ EOF
+   curl_cflags=$($curlconfig --cflags 2>/dev/null)
+-  curl_libs=$($curlconfig --libs 2>/dev/null)
++  curl_libs="$($curlconfig --libs 2>/dev/null) -lnghttp2 -lssl -lcrypto -lz -ldl"
+   if compile_prog "$curl_cflags" "$curl_libs" ; then
+     curl=yes
+   else
+@@ -3479,7 +3478,7 @@
+ for i in $glib_modules; do
+     if $pkg_config --atleast-version=$glib_req_ver $i; then
+         glib_cflags=$($pkg_config --cflags $i)
+-        glib_libs=$($pkg_config --libs $i)
++        glib_libs="$($pkg_config --libs $i) -landroid-support"
+     else
+         error_exit "glib-$glib_req_ver $i is required to compile QEMU"
+     fi
+@@ -3494,7 +3493,7 @@
+ 
+ if $pkg_config --atleast-version=$glib_req_ver gio-2.0; then
+     gio_cflags=$($pkg_config --cflags gio-2.0)
+-    gio_libs=$($pkg_config --libs gio-2.0)
++    gio_libs="$($pkg_config --libs gio-2.0) -lgmodule-2.0 -lffi -landroid-support"
+     gdbus_codegen=$($pkg_config --variable=gdbus_codegen gio-2.0)
+     if [ ! -x "$gdbus_codegen" ]; then
+         gdbus_codegen=
+@@ -4097,6 +4096,7 @@
+ if compile_prog "" "" ; then
+   signalfd=yes
+ fi
++signalfd=no
+ 
+ # check if optreset global is declared by <getopt.h>
+ optreset="no"
+@@ -5973,6 +5973,7 @@
+ if test "$darwin" = "yes" ; then
+   echo "CONFIG_DARWIN=y" >> $config_host_mak
+ fi
++ivshmem=no
+ 
+ if test "$solaris" = "yes" ; then
+   echo "CONFIG_SOLARIS=y" >> $config_host_mak
+@@ -6088,9 +6089,9 @@
+ if test "$posix_fallocate" = "yes" ; then
+   echo "CONFIG_POSIX_FALLOCATE=y" >> $config_host_mak
+ fi
+-if test "$sync_file_range" = "yes" ; then
+-  echo "CONFIG_SYNC_FILE_RANGE=y" >> $config_host_mak
+-fi
++#if test "$sync_file_range" = "yes" ; then
++#  echo "CONFIG_SYNC_FILE_RANGE=y" >> $config_host_mak
++#fi
+ if test "$fiemap" = "yes" ; then
+   echo "CONFIG_FIEMAP=y" >> $config_host_mak
+ fi

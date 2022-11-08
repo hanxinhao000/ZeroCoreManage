@@ -1,0 +1,17 @@
+diff -uNr qemu-5.2.0/configure qemu-5.2.0.mod/configure
+--- qemu-5.2.0/configure	2020-12-09 16:24:26.073781672 +0200
++++ qemu-5.2.0.mod/configure	2020-12-09 16:27:22.175279194 +0200
+@@ -5755,12 +5755,9 @@
+ 
+ if test "$softmmu" = yes ; then
+   if test "$linux" = yes; then
+-    if test "$virtfs" != no && test "$cap_ng" = yes && test "$attr" = yes ; then
++    if test "$virtfs" != no; then
+       virtfs=yes
+     else
+-      if test "$virtfs" = yes; then
+-        error_exit "VirtFS requires libcap-ng devel and libattr devel"
+-      fi
+       virtfs=no
+     fi
+   else

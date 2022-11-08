@@ -14,8 +14,9 @@
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:textStyle="bold"
+        android:id="@+id/version"
         android:textSize="22sp"
-        android:text="ZeroTermuxEngine\n0.1.20221117"
+        android:text="---"
         android:layout_height="wrap_content"/>
 
 

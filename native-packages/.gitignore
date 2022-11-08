@@ -1,0 +1,12 @@
+### Vim ###
+[._]*.s[a-w][a-z]
+[._]s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+/debs/
+/environment/
+### Vagrant ###
+scripts/*.log
+scripts/.vagrant/
