@@ -33,7 +33,8 @@ public class Config {
      * Name of CD-ROM image file.
      * Must be a name of file located in assets directory.
      */
-    public static final String CDROM_IMAGE_NAME = "operating-system.iso";
+   // public static final String CDROM_IMAGE_NAME = "operating-system.iso";
+    public static final String CDROM_IMAGE_NAME = "alpine.qcow2";
 
     /**
      * Name of HDD image file.

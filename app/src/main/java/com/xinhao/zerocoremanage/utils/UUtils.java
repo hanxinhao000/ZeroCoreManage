@@ -28,6 +28,7 @@ import androidx.annotation.LayoutRes;
 import androidx.core.content.FileProvider;
 
 
+import com.xinhao.zerocoremanage.keybord.TermuxApplication;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -92,6 +93,10 @@ public class UUtils {
 
         return mHandler;
 
+    }
+
+    public static void setHandler(Handler mHandler) {
+        TermuxApplication.mHandler = mHandler;
     }
 
 
@@ -234,7 +239,7 @@ public class UUtils {
     public static View getViewLay(@LayoutRes int mId) {
 
 
-        return View.inflate(getContext(), mId, null);
+        return View.inflate(getEngineContext(), mId, null);
 
     }
 

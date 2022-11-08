@@ -2,7 +2,11 @@ package com.xinhao.zerocoremanage.zeroeg;
 
 import android.content.Context;
 import android.os.Handler;
+import android.view.View;
 
+import com.xinhao.zerocoremanage.keybord.KeyBordManage;
+import com.xinhao.zerocoremanage.keybord.KeyData;
+import com.xinhao.zerocoremanage.keybord.TerminalView;
 import com.xinhao.zerocoremanage.utils.LogUtils;
 import com.xinhao.zerocoremanage.utils.UUtils;
 import com.xinhao.zerocoremanage.vshell.Config;
@@ -53,4 +57,24 @@ public class ZeroEngineManage {
         LogUtils.d(TAG, "getVersionName");
         return UUtils.getVersionName(mContext);
     }
+
+    public static void setRunHandler(Handler mHandler) {
+        LogUtils.d(TAG, "setHandler");
+        UUtils.setHandler(mHandler);
+    }
+    public static void setKeyHandler(Handler mHandler) {
+        LogUtils.d(TAG, "setKeyHandler");
+        KeyBordManage.setKeyHandler(mHandler);
+    }
+
+    public static View getKeyView() {
+        LogUtils.d(TAG, "getKeyView");
+        return KeyBordManage.getKeyView();
+    }
+
+    public static void initKeyView() {
+        KeyBordManage.init();
+        LogUtils.d(TAG, "initKeyView");
+    }
+
 }
