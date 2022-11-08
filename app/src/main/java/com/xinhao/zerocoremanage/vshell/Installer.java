@@ -19,22 +19,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 package com.xinhao.zerocoremanage.vshell;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.os.Handler;
-import android.util.Log;
-import android.view.WindowManager;
 
 import com.xinhao.zerocoremanage.utils.LogUtils;
 import com.xinhao.zerocoremanage.utils.UUtils;
 import com.xinhao.zerocoremanage.zeroeg.ZeroEngineManage;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Runtime data installer for assets embedded into APK.
@@ -48,9 +42,9 @@ public class Installer {
     public static void setupIfNeeded(final Context mContext, Context mEngineContext, Handler mHandler) {
         // List of files to extract.
         final String[] runtimeDataFiles = {
-            "bios-256k.bin",
-            "efi-virtio.rom",
-            "kvmvapic.bin",
+                "alpine/bios-256k.bin",
+                "alpine/efi-virtio.rom",
+                "alpine/kvmvapic.bin",
             Config.CDROM_IMAGE_NAME,
             Config.HDD_IMAGE_NAME,
         };
