@@ -39,6 +39,11 @@ public class FileBrowserManage {
 
     public static void install(Context mContext, Context mEngineContext, Handler mInstallHandler) {
         FILE_BROWSER_PATH = Config.getDataDirectory(mContext) + "/home/.filebrowser/";
+        File file = new File(FILE_BROWSER_PATH);
+        if (!file.exists()) {
+            file.mkdirs();
+            LogUtils.d(TAG, "install mkdirs :" + file.getAbsolutePath());
+        }
         mInstallHandler.sendEmptyMessage(FILE_BROWSER_INSTALLING);
 
         try {
