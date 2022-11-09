@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.view.View;
 
+import com.xinhao.zerocoremanage.filebrowser.FileBrowserManage;
 import com.xinhao.zerocoremanage.keybord.KeyBordManage;
 import com.xinhao.zerocoremanage.keybord.KeyData;
 import com.xinhao.zerocoremanage.keybord.TerminalView;
@@ -77,4 +78,8 @@ public class ZeroEngineManage {
         LogUtils.d(TAG, "initKeyView");
     }
 
+    public static void installFileBrowser(Context mContext, Context mEngineContext, Handler mInstallHandler) {
+        LogUtils.d(TAG, "installFileBrowser");
+        FileBrowserManage.install(mContext, mEngineContext, mInstallHandler);
+    }
 }

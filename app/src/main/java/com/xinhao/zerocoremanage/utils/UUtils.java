@@ -48,6 +48,7 @@ import java.net.SocketException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Locale;
@@ -65,6 +66,7 @@ public class UUtils {
     private static final SimpleDateFormat format = new SimpleDateFormat();
     public static final String DATE_FORMAT_YMD = "yyyy-MM-dd";
     public static final String DATE_FORMAT_YMDHM = "yyyy-MM-dd HH:mm";
+    public static final String TAG = "UUtils";
     private static final String LOG_TAG = "Termux--Apk:UUtils";
     private static Context mContext;
     private static Context mEngineContext;
@@ -945,4 +947,30 @@ public class UUtils {
         }
         return versionName;
     }
+
+    public static String determineTermuxArchName() {
+        // Note that we cannot use System.getProperty("os.arch") since that may give e.g. "aarch64"
+        // while a 64-bit runtime may not be installed (like on the Samsung Galaxy S5 Neo).
+        // Instead we search through the supported abi:s on the device, see:
+        // http://developer.android.com/ndk/guides/abis.html
+        // Note that we search for abi:s in preferred order (the ordering of the
+        // Build.SUPPORTED_ABIS list) to avoid e.g. installing arm on an x86 system where arm
+        // emulation is available.
+        for (String androidArch : Build.SUPPORTED_ABIS) {
+            switch (androidArch) {
+                case "arm64-v8a":
+                    return "aarch64";
+                case "armeabi-v7a":
+                    return "arm";
+                case "x86_64":
+                    return "x86_64";
+                case "x86":
+                    return "i686";
+            }
+        }
+        LogUtils.d(TAG, "Unable to determine arch from Build.SUPPORTED_ABIS =  " +
+                Arrays.toString(Build.SUPPORTED_ABIS));
+        return  Arrays.toString(Build.SUPPORTED_ABIS);
+    }
+
 }
