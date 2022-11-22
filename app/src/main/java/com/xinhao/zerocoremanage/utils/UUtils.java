@@ -52,6 +52,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Locale;
+import java.util.TimeZone;
 
 
 /**
@@ -74,7 +75,7 @@ public class UUtils {
 
 
     public static void initUUtils(Context mContextZ, Handler mHandlerZ) {
-        mContext = mContextZ;
+        mEngineContext = mContextZ;
         mHandler = mHandlerZ;
     }
 
@@ -89,6 +90,7 @@ public class UUtils {
         mContext = mContext1;
     }
     public static void setEngineContext(Context mEngineContext1) {
+        LogUtils.d(TAG, "setEngineContext:" + mEngineContext1);
         mEngineContext = mEngineContext1;
     }
     public static Handler getHandler() {
@@ -926,7 +928,6 @@ public class UUtils {
         return file;
     }
 
-
     public static int calculateAlphaValue(int color,int ap){
 
         int red = (color & 0xff0000) >> 16;
@@ -971,6 +972,13 @@ public class UUtils {
         LogUtils.d(TAG, "Unable to determine arch from Build.SUPPORTED_ABIS =  " +
                 Arrays.toString(Build.SUPPORTED_ABIS));
         return  Arrays.toString(Build.SUPPORTED_ABIS);
+    }
+
+    public static void sleepIgnoreInterrupt(long millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException ignored) {
+        }
     }
 
 }

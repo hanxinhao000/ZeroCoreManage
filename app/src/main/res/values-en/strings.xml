@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ZeroCoreManage</string>
+    <string name="storage_warning">Warning: storage is not available. You may want to unmount it.</string>
+</resources>
